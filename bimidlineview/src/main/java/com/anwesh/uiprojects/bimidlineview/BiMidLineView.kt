@@ -182,4 +182,26 @@ class BiMidLineView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : BiMidLineView) {
+
+        private val animator : Animator = Animator(view)
+        private val bml : BiMidLine = BiMidLine(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            bml.draw(canvas, paint)
+            animator.animate {
+                bml.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            bml.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
