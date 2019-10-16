@@ -11,6 +11,7 @@ import android.content.Context
 import android.graphics.Paint
 import android.graphics.Canvas
 import android.graphics.Color
+import android.util.Log
 
 val nodes : Int = 5
 val scGap : Float = 0.01f
@@ -26,15 +27,15 @@ fun Float.maxScale(i : Int, n : Int) : Float = Math.max(0f, this - i * n.inverse
 fun Float.divideScale(i : Int, n : Int) : Float = Math.min(n.inverse(), maxScale(i, n)) * n
 
 fun Canvas.drawBiMidLine(scale : Float, size : Float, w : Float, paint : Paint) {
-    val sc1 : Float = scale.divideScale(0, 3)
-    val sc2 : Float = scale.divideScale(1, 3)
-    val sc3 : Float = scale.divideScale(2, 3)
+    val sc1 : Float = scale.divideScale(0, parts)
+    val sc2 : Float = scale.divideScale(1, parts)
+    val sc3 : Float = scale.divideScale(2, parts)
     val xMid : Float = w / 2
     drawLine(0f, (size), xMid * sc1, size, paint)
     save()
     translate(xMid, 0f)
     drawLine(0f, size, 0f, size - 2 * size * sc2, paint)
-    drawLine(xMid, -size, xMid + xMid * sc3, -size, paint)
+    drawLine(0f, -size, xMid * sc3, -size, paint)
     restore()
 }
 
@@ -162,13 +163,11 @@ class BiMidLineView(ctx : Context) : View(ctx) {
     }
 
     data class BiMidLine(var i : Int) {
-
-        private val root : BMLNode = BMLNode(0)
-        private var curr : BMLNode = root
+        private var curr : BMLNode = BMLNode(0)
         private var dir : Int = 1
 
         fun draw(canvas : Canvas, paint : Paint) {
-            root.draw(canvas, paint)
+            curr.draw(canvas, paint)
         }
 
         fun update(cb : (Float) -> Unit) {
@@ -196,6 +195,7 @@ class BiMidLineView(ctx : Context) : View(ctx) {
             animator.animate {
                 bml.update {
                     animator.stop()
+                    Log.d("stopping animation", "${animator.animated}")
                 }
             }
         }
