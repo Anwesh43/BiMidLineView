@@ -206,4 +206,13 @@ class BiMidLineView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+
+        fun create(activity : Activity) : BiMidLineView {
+            val view : BiMidLineView = BiMidLineView(activity)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }
